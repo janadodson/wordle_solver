@@ -21,7 +21,7 @@ class WordlePlayer:
 
         self.browser = webdriver.Chrome(options=options)
         self.actions = ActionChains(self.browser)
-        self.wait = WebDriverWait(self.browser, 30)
+        self.wait = WebDriverWait(self.browser, 30, 1)
 
         self.browser.get("https://www.nytimes.com/games/wordle/index.html")
         self.actions.send_keys(Keys.ESCAPE)
@@ -60,7 +60,6 @@ class WordlePlayer:
         share_button.click()
 
     def add_guess(self, guess: str) -> None:
-        self.actions.send_keys(Keys.RETURN)
         self.actions.send_keys(guess + Keys.RETURN)
         self.actions.perform()
         self.guess_count += 1
