@@ -31,8 +31,7 @@ class WordlePlayer:
         if browser is None:
             browser = self.browser
 
-        row_element = browser.find_elements(by=By.CLASS_NAME, value="Row-module_row__dEHfN")[row]
-        tile_element = row_element.find_elements(by=By.CLASS_NAME, value="Tile-module_tile__3ayIZ")[col]
+        tile_element = browser.find_elements(by=By.XPATH, value=f"//div[@aria-label='Row {row + 1}']//div[@aria-roledescription='tile']")[col]
 
         return tile_element.get_attribute("data-state")
 
@@ -51,12 +50,12 @@ class WordlePlayer:
         if browser is None:
             browser = self.browser
 
-        elements = self.browser.find_elements(by=By.CLASS_NAME, value="AuthCTA-module_shareText__o7WL-")
+        elements = self.browser.find_elements(by=By.XPATH, value="//*[@data-testid='icon-share']")
 
         return len(elements) > 0
 
     def __click_share_button(self) -> None:
-        share_button = self.browser.find_element(by=By.CLASS_NAME, value="AuthCTA-module_shareText__o7WL-")
+        share_button = self.browser.find_element(by=By.XPATH, value="//*[@data-testid='icon-share']")
         share_button.click()
 
     def add_guess(self, guess: str) -> None:
