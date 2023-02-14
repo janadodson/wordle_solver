@@ -127,6 +127,19 @@ class WordleAdvisor:
         self.__update_solutions(guess, colors)
         self.__update_color_map(guess, colors)
 
+    def get_grid_icons(self) -> str:
+        icons = ""
+
+        for row in range(len(self.colors)):
+            new_icons = "".join(self.colors.iloc[row].map({
+                "b": "⬜",
+                "y": "🟨",
+                "g": "🟩"
+            }))
+            icons = icons + new_icons + "\n"
+
+        return icons
+
     def play(self, n_jobs: int = -1) -> None:
         self.__init__()
         for i in range(self.n_guesses):
