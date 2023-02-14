@@ -1,4 +1,3 @@
-import pyperclip as pc
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
@@ -18,6 +17,8 @@ class WordlePlayer:
     def __load_game(self) -> None:
         options = webdriver.ChromeOptions()
         options.add_argument("--incognito")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--headless")
 
         self.browser = webdriver.Chrome(options=options)
         self.actions = ActionChains(self.browser)
@@ -83,11 +84,13 @@ class WordlePlayer:
         self.__load_game()
         advisor = WordleAdvisor()
 
+        print("Guesses:")
         guess = "raise"
         for i in range(advisor.n_guesses):
             self.add_guess(guess)
             colors = self.get_colors()
             advisor.add_guess(guess, colors)
+            print(guess)
 
             if colors == "ggggg":
                 break
@@ -97,10 +100,8 @@ class WordlePlayer:
         self.wait.until(self.__is_share_button_loaded)
         self.__click_share_button()
 
-        print("Guesses:")
-        print(advisor.guesses.apply(lambda row: "".join(row), axis=1))
         print("\nColors:")
-        print(pc.paste())
+        print(advisor.get_grid_icons())
 
 
 if __name__ == "__main__":
