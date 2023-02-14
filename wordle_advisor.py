@@ -140,6 +140,15 @@ class WordleAdvisor:
 
         return icons
 
+    def get_guesses(self) -> str:
+        guesses = ""
+
+        for row in range(len(self.guesses)):
+            new_guess = "".join(self.guesses.iloc[row])
+            guesses = guesses + new_guess + "\n"
+
+        return guesses
+
     def play(self, n_jobs: int = -1) -> None:
         self.__init__()
         for i in range(self.n_guesses):
@@ -154,7 +163,6 @@ class WordleAdvisor:
             print("Processing input...")
 
             self.add_guess(guess, colors)
-            best_next_guess = self.get_best_next_guess(n_jobs)
 
             if colors == "ggggg":
                 print("Congratulations! You have solved the Wordle!")

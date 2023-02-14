@@ -9,16 +9,17 @@ from wordle_advisor import WordleAdvisor
 
 
 class WordlePlayer:
-    def __init__(self) -> None:
-        self.n_letters = 5
-        self.n_guesses = 6
+    def __init__(self, headless: bool = True) -> None:
+        self.advisor = WordleAdvisor()
         self.guess_count = 0
+        self.headless = headless
 
     def __load_game(self) -> None:
         options = webdriver.ChromeOptions()
         options.add_argument("--incognito")
         options.add_argument("--no-sandbox")
-        options.add_argument("--headless")
+        if self.headless:
+            options.add_argument("--headless")
 
         self.browser = webdriver.Chrome(options=options)
         self.actions = ActionChains(self.browser)
@@ -43,21 +44,9 @@ class WordlePlayer:
         if self.guess_count == 0:
             return False
 
-        state = self.__get_tile_state(self.guess_count - 1, self.n_letters - 1, browser)
+        state = self.__get_tile_state(self.guess_count - 1, self.advisor.n_letters - 1, browser)
 
         return state not in ("empty", "tbd")
-
-    def __is_share_button_loaded(self, browser: WebDriver = None) -> bool:
-        if browser is None:
-            browser = self.browser
-
-        elements = self.browser.find_elements(by=By.XPATH, value="//*[@data-testid='icon-share']")
-
-        return len(elements) > 0
-
-    def __click_share_button(self) -> None:
-        share_button = self.browser.find_element(by=By.XPATH, value="//*[@data-testid='icon-share']")
-        share_button.click()
 
     def add_guess(self, guess: str) -> None:
         self.actions.send_keys(guess + Keys.RETURN)
@@ -67,8 +56,8 @@ class WordlePlayer:
 
     def get_colors(self) -> str:
         colors = ""
-        
-        for col in range(self.n_letters):
+
+        for col in range(self.advisor.n_letters):
             state = self.__get_tile_state(self.guess_count - 1, col)
             if state == "absent":
                 colors += "b"
@@ -80,30 +69,27 @@ class WordlePlayer:
         return colors
 
     def play(self, n_jobs: int = -1) -> None:
-        self.__init__()
+        self.__init__(headless=self.headless)
         self.__load_game()
-        advisor = WordleAdvisor()
 
-        print("Guesses:")
         guess = "raise"
-        for i in range(advisor.n_guesses):
+        for i in range(self.advisor.n_guesses):
             self.add_guess(guess)
             colors = self.get_colors()
-            advisor.add_guess(guess, colors)
-            print(guess)
+            self.advisor.add_guess(guess, colors)
 
             if colors == "ggggg":
                 break
 
-            guess = advisor.get_best_next_guess(n_jobs)
-
-        self.wait.until(self.__is_share_button_loaded)
-        self.__click_share_button()
-
-        print("\nColors:")
-        print(advisor.get_grid_icons())
+            guess = self.advisor.get_best_next_guess(n_jobs)
 
 
 if __name__ == "__main__":
-    player = WordlePlayer()
+    player = WordlePlayer(headless=False)
     player.play()
+
+    print("Colors:")
+    print(player.advisor.get_grid_icons())
+
+    print("Guesses:")
+    print(player.advisor.get_guesses())
