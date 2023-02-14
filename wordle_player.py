@@ -74,6 +74,8 @@ class WordlePlayer:
 
         guess = "raise"
         for i in range(self.advisor.n_guesses):
+            print(f"Guess {i}: {guess}")
+            
             self.add_guess(guess)
             colors = self.get_colors()
             self.advisor.add_guess(guess, colors)
@@ -88,8 +90,5 @@ if __name__ == "__main__":
     player = WordlePlayer(headless=False)
     player.play()
 
-    print("Colors:")
+    print("\nColors:")
     print(player.advisor.get_grid_icons())
-
-    print("Guesses:")
-    print(player.advisor.get_guesses())
