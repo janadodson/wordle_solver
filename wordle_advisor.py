@@ -169,6 +169,7 @@ class WordleAdvisor:
                 break
 
             else:
+                self.get_best_next_guess()
                 print(f"Solutions remaining: {len(self.solutions)}")
                 print("Top Next Guesses:")
                 print(self.next_guess_scores.sort_values(ascending=False).head(5))
